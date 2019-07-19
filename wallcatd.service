@@ -1,0 +1,11 @@
+[Unit]
+Description=Change desktop and lock screen wallpaper at boot
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+StandardOutput=journal
+ExecStart=python3 %h/services/wallcatd/wallcatd.py
+
+[Install]
+WantedBy=default.target
