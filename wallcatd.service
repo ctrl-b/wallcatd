@@ -1,9 +1,10 @@
 [Unit]
-Description=Change desktop and lock screen wallpaper at boot
+Description=Desktop and lockscreen wallpapers from wallcat everyday
 
 [Service]
 Type=oneshot
 StandardOutput=journal
+ExecStartPre=/bin/sleep 30
 ExecStart=python3 %h/services/wallcatd/wallcatd.py
 
 [Install]

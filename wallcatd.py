@@ -9,7 +9,8 @@ time_day = '/image/' + time.strftime("%Y-%m-%d") + 'T00:00:00.000Z'
 backgrounds = ['background', 'screensaver']
 potd_background = url + fresh + time_day
 potd_screensaver = url + structure + time_day
-
+hostname = 'google.com'
+response = os.system('ping -c 1 ' + hostname)
 
 def urlify( str ):
     img = json.loads(requests.get( str ).text)['payload']['image']['url']['o']
@@ -18,11 +19,6 @@ def urlify( str ):
 def current( str ):
     curr = subprocess.Popen('gsettings get org.gnome.desktop.' + str + ' picture-uri', shell=True, stdout=subprocess.PIPE).stdout.read().decode('utf-8')
     return curr;
-
-images = [
-        urlify(potd_background),
-        urlify(potd_screensaver)
-        ]
 
 # Download picture of the day function
 def downloadpotd( image, path ):
@@ -49,31 +45,41 @@ def getimg( type ):
     path = os.environ['HOME'] + '/Pictures/' + filename + '.jpg'
     imgdata = [imguri, filename, path]
     return imgdata;
+           
+# check for internet connection first
+if response == 0:
 
-# Main loop function to setup, check and download images
-for background in backgrounds:
+    print(hostname, 'is reachable, downloading images...')
+    images = [
+        urlify(potd_background),
+        urlify(potd_screensaver)
+    ]
+   
+    # Main loop function to setup, check and download images
+    for background in backgrounds:
 
-    # Get image of the day and set
-    today = getimg(background)
+        # Get image of the day and set
+        today = getimg(background)
 
-    # Check if already exists as background
-    if today[1] in current(background):
-        print(background + ' already configured')
+        # Check if already exists as background
+        if today[1] in current(background):
+            print(background + ' already configured')
 
-    # if not
-    else:
-
-    # check if exist on local, if exists, set it up
-        if checkexist(today[2]):
-            print(background + ' exists on local')
-            setbackground( background, today[2])
-            print('Setting ' + background)
-
-    # If doesn't exists on local, download
+        # if not
         else:
-            downloadpotd(today[0],today[2])
-            print('Downloading ' + background)
-            # Configurar
-            setbackground( background, today[2])
-            print('Setting ' + background)
+            # check if exist on local, if exists, set it up
+            if checkexist(today[2]):
+                print(background + ' exists on local')
+                setbackground( background, today[2])
+                print('Setting ' + background)
+
+            # If doesn't exists on local, download
+            else:
+                downloadpotd(today[0],today[2])
+                print('Downloading ' + background)
+                # Configurar
+                setbackground( background, today[2])
+                print('Setting ' + background)
+else:
+    print(hostname, ' not reachable')
 
