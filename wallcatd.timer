@@ -1,0 +1,10 @@
+[Unit]
+Description=wallcatd timer
+
+[Timer]
+OnCalendar=*-*-* 08:00:00
+Persistent=true
+Unit=wallcatd.service
+
+[Install]
+WantedBy=wallcatd.service
